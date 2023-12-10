@@ -1,0 +1,21 @@
+curl --location 'http://localhost:8083/connectors' \
+--header 'Content-Type: application/json' \
+--data '{
+    "name": "property-connector",
+    "config": {
+        "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+        "database.allowPublicKeyRetrieval":"true",
+        "database.hostname": "host.docker.internal",
+        "database.port": "3306",
+        "database.user": "root",
+        "database.password": "verysecret",
+        "database.include.list": "transactions_db",
+        "table.include.list": "transactions_db.transactions",
+        "topic.prefix": "transactions_db",
+        "database.server.name": "transactions_db",
+        "include.schema.changes": "false",
+        "schema.history.internal.kafka.bootstrap.servers":  "broker:29092",
+        "schema.history.internal.kafka.topic": "schema-changes.db",
+        "database.server.id": 1
+    }
+}'

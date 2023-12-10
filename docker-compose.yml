@@ -1,0 +1,151 @@
+version: '3.8'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    healthcheck:
+      test: [ "CMD", "bash", "-c", "echo 'ruok' | nc localhost 2181" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  broker:
+    image: confluentinc/cp-kafka:latest
+    hostname: broker
+    container_name: broker
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    ports:
+      - "9092:9092"
+      - "9101:9101"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+#      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+#      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+#      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+#      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+#      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+#      KAFKA_JMX_PORT: 9101
+#      KAFKA_JMX_HOSTNAME: localhost
+    healthcheck:
+      test: [ "CMD", "bash", "-c", 'nc -z localhost 9092' ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+#  postgres:
+#    image: postgres:latest
+#    container_name: postgres
+#    ports:
+#      - "5432:5432"
+#    environment:
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: postgres
+#      POSTGRES_DB: postgres
+#    healthcheck:
+#      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql-debezium
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_DATABASE: transactions_db
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: verysecret
+    command: --character-set-server=utf8 --collation-server=utf8_general_ci
+    volumes:
+      - ./mysql-data/data:/var/lib/mysql
+
+  redis:
+    container_name: redis-master
+    image: 'bitnami/redis:latest'
+    environment:
+      - REDIS_AOF_ENABLED=yes
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/data:/bitnami/redis/data
+
+  debezium:
+    image: debezium/connect:latest
+    container_name: debezium
+    ports:
+      - 8083:8083
+    depends_on:
+       broker:
+          condition: service_healthy
+    environment:
+      GROUP_ID: 1
+      CONFIG_STORAGE_TOPIC: debezium-config
+      OFFSET_STORAGE_TOPIC: debezium-offset
+      STATUS_STORAGE_TOPIC: debezium-status
+      BOOTSTRAP_SERVERS: broker:29092
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
+    container_name: es-container
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+
+  kibana:
+    container_name: kb-container
+    image: docker.elastic.co/kibana/kibana:8.11.1
+    environment:
+      - ELASTICSEARCH_HOSTS=http://es-container:9200
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601
+
+#  jobmanager:
+#    image: flink:latest
+#    ports:
+#      - "8081:8081"
+#    command: jobmanager
+#    environment:
+#      - |
+#        FLINK_PROPERTIES=
+#        jobmanager.rpc.address: jobmanager
+#
+#  taskmanager:
+#    image: flink:latest
+#    depends_on:
+#      - jobmanager
+#    command: taskmanager
+#    environment:
+#      - |
+#        FLINK_PROPERTIES=
+#        jobmanager.rpc.address: jobmanager
+#        taskmanager.numberOfTaskSlots: 4
+#  sql-client:
+#    image: flink:latest
+#    command: bin/sql-client.sh
+#    depends_on:
+#      - jobmanager
+#    environment:
+#      - |
+#        FLINK_PROPERTIES=
+#        jobmanager.rpc.address: jobmanager
+#        rest.address: jobmanager

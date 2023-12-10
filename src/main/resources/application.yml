@@ -1,0 +1,59 @@
+
+#spring:
+#  kafka:
+#    consumer:
+#      bootstrap-servers: localhost:9092
+#      group-id: transactions
+#      auto-offset-reset: earliest
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+#      properties:
+#        spring:
+#          json:
+#            trusted:
+#              packages: "com.alok.fin.analyticsgenerator"
+#          deserializer:
+#            value:
+#              delegate:
+#                class: org.springframework.kafka.support.serializer.JsonDeserializer
+#    producer:
+#      bootstrap-servers: localhost:9092
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+#      properties:
+#        spring:
+#          json:
+#            trusted:
+#              packages: "com.alok.fin.analyticsgenerator"
+#            add:
+#              type:
+#                headers: true
+#          serializer:
+#            value:
+#              default:
+#                type: "com.alok.fin.analyticsgenerator.Transaction"
+#          data:
+#            format:
+#              pretty-print: true
+
+server:
+  port: 9355
+
+spring:
+  data:
+    jpa:
+      repositories:
+        enabled: true
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/transactions_db
+    username: root
+    password: verysecret
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database: mysql
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
