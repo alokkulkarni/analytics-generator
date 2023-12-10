@@ -34,7 +34,8 @@ class CreateTransactions {
             transactionCategory = "transactionCategory",
             transactionSubCategory = "transactionSubCategory",
             transactionLatitude = "transactionLatitude",
-            transactionLongitude = "transactionLongitude"
+            transactionLongitude = "transactionLongitude",
+            merchant = merchant
         )
         val save = transactionsRepository.save(transactions)
         return save.transactionId

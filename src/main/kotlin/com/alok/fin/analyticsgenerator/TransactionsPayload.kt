@@ -47,5 +47,28 @@ data class TransactionsModel (
     @JsonProperty("transactionLongitude")
     val transactionLongitude: String,
     @JsonProperty("createdDate")
-    var createdDate: Long = 0
+    var createdDate: Long = 0,
+    @JsonProperty("merchant")
+    val merchant: MerchantModel?
+)
+
+data class MerchantModel (
+    @JsonProperty("merchantId")
+    val merchantId: String,
+    @JsonProperty("merchantName")
+    val merchantName: String,
+    @JsonProperty("merchantLogo")
+    val merchantLogo: String,
+    @JsonProperty("merchantCity")
+    val merchantCity: String,
+    @JsonProperty("merchantCountry")
+    val merchantCountry: String,
+    @JsonProperty("merchantCategory")
+    val merchantCategory: String,
+    @JsonProperty("merchantCategoryCode")
+    val merchantCategoryCode: String,
+    @JsonProperty("merchantLatitude")
+    val merchantLatitude: String,
+    @JsonProperty("merchantLongitude")
+    val merchantLongitude: String
 )

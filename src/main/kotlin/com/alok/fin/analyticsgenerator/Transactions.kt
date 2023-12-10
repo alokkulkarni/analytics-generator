@@ -23,7 +23,10 @@ data class Transactions(
 	val transactionSubCategory: String,
 	val transactionLatitude: String,
 	val transactionLongitude: String,
-	var createdDate: Instant = Instant.now()
+	var createdDate: Instant = Instant.now(),
+	@ManyToOne
+	@JoinColumn(name = "merchant_id", referencedColumnName = "merchantId")
+	val merchant: Merchant
 ) {
 	constructor() : this(
 		UUID.randomUUID(),
@@ -38,7 +41,9 @@ data class Transactions(
 		"transactionCategory",
 		"transactionSubCategory",
 		"transactionLatitude",
-		"transactionLongitude"
+		"transactionLongitude",
+		Instant.now(),
+		Merchant()
 	)
 
 	@PrePersist

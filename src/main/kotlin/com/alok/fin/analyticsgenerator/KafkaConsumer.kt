@@ -1,9 +1,7 @@
 package com.alok.fin.analyticsgenerator
 
 import org.springframework.kafka.annotation.KafkaListener
-import org.springframework.kafka.support.Acknowledgment
 import org.springframework.messaging.handler.annotation.Payload
-import org.springframework.messaging.support.GenericMessage
 import org.springframework.stereotype.Component
 
 @Component
@@ -11,7 +9,6 @@ class KafkaConsumer {
 
 	@KafkaListener(topics = ["transactions_db.transactions_db.transactions"], containerFactory = "kafkaListenerContainerFactory", groupId = "transactions-group")
 	fun consumer(@Payload(required = false) message: TransactionsListner) {
-//		println("Received Message in group transactions: ${message}")
 		if (message.transactionsPayload.op == "c")
 			println("Received Message in group transactions with op c: ${message.transactionsPayload.after}")
 		else if (message.transactionsPayload.op == "u"){

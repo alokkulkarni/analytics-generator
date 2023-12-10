@@ -13,11 +13,9 @@ class AnalyticsGeneratorApplication {
 	fun run(kafkaTemplate: KafkaTemplate<String, Transactions>, transactionsRepository: TransactionsRepository, merchantRepository: MerchantRepository) = CommandLineRunner {
 		while (true) {
 			Thread.sleep(5000)
-			CreateTransactions().createTransaction(merchantRepository, transactionsRepository).apply { println("Created transaction: $this") }
-			val createTransaction = CreateTransactions().createTransaction(merchantRepository, transactionsRepository)
-//			val transactions = transactionsRepository.findById(createTransaction).get()
-//			kafkaTemplate.send("transactions_db.transactions_db.transactions", transactions)
-
+			for (i in 1..100) {
+				CreateTransactions().createTransaction(merchantRepository, transactionsRepository).apply { println("Created transaction: $this") }
+			}
 		}
 //		KafkaProducer(kafkaTemplate, transactionsRepository, merchantRepository).producer()
 	}
