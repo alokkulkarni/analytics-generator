@@ -2,7 +2,6 @@ package com.alok.fin.analyticsgenerator
 
 import jakarta.persistence.*
 import java.time.Instant
-import java.time.LocalDateTime
 import java.util.*
 
 
@@ -24,9 +23,7 @@ data class Transactions(
 	val transactionLatitude: String,
 	val transactionLongitude: String,
 	var createdDate: Instant = Instant.now(),
-	@ManyToOne
-	@JoinColumn(name = "merchant_id", referencedColumnName = "merchantId")
-	val merchant: Merchant
+	val merchantId: String? = null
 ) {
 	constructor() : this(
 		UUID.randomUUID(),
@@ -43,7 +40,7 @@ data class Transactions(
 		"transactionLatitude",
 		"transactionLongitude",
 		Instant.now(),
-		Merchant()
+		UUID.randomUUID().toString()
 	)
 
 	@PrePersist

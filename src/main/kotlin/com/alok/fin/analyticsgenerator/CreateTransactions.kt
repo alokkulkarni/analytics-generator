@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VARIABLE", "UNUSED_PARAMETER")
+
 package com.alok.fin.analyticsgenerator
 
 import java.util.*
@@ -6,7 +8,8 @@ class CreateTransactions {
 
     fun createTransaction(
         merchantRepository: MerchantRepository,
-        transactionsRepository: TransactionsRepository
+        transactionsRepository: TransactionsRepository,
+        merchantCategoryCodesRepository: MerchantCategoryCodesRepository
     ): UUID {
         val id = UUID.randomUUID()
         val merchant = Merchant(
@@ -20,7 +23,9 @@ class CreateTransactions {
             "merchantLatitude",
             "merchantLongitude"
         )
-        merchantRepository.save(merchant)
+        val merchantCategoryCodes = merchantCategoryCodesRepository.findAll().randomOrNull()
+        print (merchantCategoryCodes)
+
         val transactions = Transactions(
             UUID.randomUUID(),
             accountId = "accountId",
@@ -31,11 +36,11 @@ class CreateTransactions {
             transactionCurrency = "transactionCurrency",
             transactionRefrence = "transactionRefrence",
             transactionStatus = "transactionStatus",
-            transactionCategory = "transactionCategory",
+            transactionCategory = merchantCategoryCodes?.categoryDescription ?: "transactionCategory",
             transactionSubCategory = "transactionSubCategory",
             transactionLatitude = "transactionLatitude",
             transactionLongitude = "transactionLongitude",
-            merchant = merchant
+            merchantId = merchantCategoryCodes?.id
         )
         val save = transactionsRepository.save(transactions)
         return save.transactionId

@@ -28,6 +28,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.apache.kafka:kafka-streams")
+	implementation("org.apache.commons:commons-csv:1.8")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 //	implementation("org.springframework.cloud:spring-cloud-starter")
 //	implementation("org.springframework.cloud:spring-cloud-starter-task")
