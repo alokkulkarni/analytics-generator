@@ -28,13 +28,13 @@ class CreateTransactions {
 
         val transactions = Transactions(
             UUID.randomUUID(),
-            accountId = "accountId",
-            customerId = "customerId - 123456789",
+            accountId = "UUID.randomUUID().toString()",
+            customerId = UUID.randomUUID().toString(),
             transactionType = "transactionType",
             transactionDate = "transactionDate",
             transactionAmount = "transactionAmount",
             transactionCurrency = "transactionCurrency",
-            transactionRefrence = "transactionRefrence",
+            transactionRefrence = "transactionRefrence" + Random().nextInt().toString(),
             transactionStatus = "transactionStatus",
             transactionCategory = merchantCategoryCodes?.categoryDescription ?: "transactionCategory",
             transactionSubCategory = "transactionSubCategory",

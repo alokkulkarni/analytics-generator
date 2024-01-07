@@ -19,7 +19,7 @@ class AnalyticsGeneratorApplication {
 		}
 		while (true) {
 			Thread.sleep(5000)
-			for (i in 1..2) {
+			for (i in 1..1) {
 				CreateTransactions().createTransaction(merchantRepository, transactionsRepository, merchantCategoryCodesRepository).apply { println("Created transaction: $this") }
 			}
 		}

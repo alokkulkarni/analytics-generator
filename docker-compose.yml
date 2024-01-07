@@ -44,7 +44,22 @@ services:
       timeout: 5s
       retries: 5
 
-#  postgres:
+#  kafkaConnectUI:
+#    image: landoop/fast-data-dev:latest
+#    ports:
+#      - "3030:3030" # Web UI
+#      - "8081:8081" # Schema registry
+#      - "8082:8082" # Kafka REST proxy
+#      - "8083:8083" # Kafka connect distributed
+#      - "9092:9092" # Kafka broker
+#      - "2181:2181" # ZooKeeper
+#    environment:
+#      ADV_HOST: 127.0.0.1
+#      RUNTESTS: 0
+#      DEBUG: 1
+#      SAMPLEDATA: 0
+
+  #  postgres:
 #    image: postgres:latest
 #    container_name: postgres
 #    ports:
@@ -72,7 +87,9 @@ services:
       MYSQL_ROOT_PASSWORD: verysecret
     command: --character-set-server=utf8 --collation-server=utf8_general_ci
     volumes:
-      - ./mysql-data/data:/var/lib/mysql
+      - ./mysql-analytics-data/data:/var/lib/mysql
+    networks:
+      - mysql-analytics-network
 
   redis:
     container_name: redis-master
@@ -84,6 +101,8 @@ services:
       - "6379:6379"
     volumes:
       - ./redis/data:/bitnami/redis/data
+    networks:
+      - mysql-analytics-network
 
   debezium:
     image: debezium/connect:latest
@@ -99,9 +118,11 @@ services:
       OFFSET_STORAGE_TOPIC: debezium-offset
       STATUS_STORAGE_TOPIC: debezium-status
       BOOTSTRAP_SERVERS: broker:29092
+      LINK_NAME: mysql, elasticsearch
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
+    hostname: elasticsearch
     container_name: es-container
     environment:
       - xpack.security.enabled=false
@@ -149,3 +170,7 @@ services:
 #        FLINK_PROPERTIES=
 #        jobmanager.rpc.address: jobmanager
 #        rest.address: jobmanager
+
+networks:
+  mysql-analytics-network:
+    driver: bridge
