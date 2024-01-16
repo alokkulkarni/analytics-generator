@@ -1,0 +1,11 @@
+elasticsearch:
+  host: http://es-container:9200
+  username: elastic
+  password: uzOzDdDQZqGgWDgT2oLY
+
+kibana:
+    host: http://kb-container:5601
+# Path: enterprise-search/enterprise-search.yml
+# Compare this snippet from docker-compose.yml:
+secret_management.encryption_keys:
+  - f6427a7eb11296474c9fb4c2a60353bdbafb8739a974038c6cf56584aadeb9fe

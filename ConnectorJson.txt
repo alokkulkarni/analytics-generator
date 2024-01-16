@@ -30,13 +30,25 @@ curl --location 'http://localhost:8083/connectors' \
         "connector.class":
         "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
         "tasks.max": "1",
-        "topics": ["transactions_db.transactions_db.transactions"],
-        "connection.url": "http://es-container:9200",
+        "topics": "transactions_db.transactions_db.transactions",
+        "connection.url": "https://es01:9200",
+        "connection.username": "elastic",
+        "connection.password": "invincible@123",
+        "elastic.security.protocol": "SSL",
+        "elastic.https.ssl.keystore.location": "/kafka/config/certs/keystore.jks",
+        "elastic.https.ssl.keystore.password": "invincible@123",
+        "elastic.https.ssl.key.password": "invincible@123",
+        "elastic.https.ssl.keystore.type": "JKS",
+        "elastic.https.ssl.truststore.location": "/kafka/config/certs/truststore.jks",
+        "elastic.https.ssl.truststore.password": "invincible@123",
+        "elastic.https.ssl.truststore.type": "JKS",
+        "elastic.https.ssl.protocol": "TLS",
         "key.ignore": "true",
         "schema.ignore": "true",
         "type.name": "transactions",
         "transforms": "extractId",
         "transforms.extractId.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
-        "transforms.extractId.field": "transactionId"
+        "transforms.extractId.field": "transactionId",
+        "behavior.on.null.values": "delete"
     }
 }'
